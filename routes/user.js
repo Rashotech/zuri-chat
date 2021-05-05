@@ -4,24 +4,18 @@ const bcrypt = require('bcrypt');
 const User = require('../models/UserModel');
 
 router.get('/register', (req, res, next) => {
-    res.render('register', { pageTitle: "Register"})
+    return res.render('register')
 });
 
 router.post('/register', async (req, res, next) => {
-    const { firstName, lastName, username, email, password } = req.body;
-    var payload = req.body;
-
-    if (firstName && lastName && username && email && password) {
-        var user = await User.findOne({
-            $or: [
-                { username: username },
-                { email: email  }
-            ]
-        })
+    const { fullName, username, password } = req.body;
+    if (fullName && username && password) {
+        var user = await User.findOne({ username })
         .catch((error) => {
             console.log(error);
-            payload.errorMessage = "Something went wrong";
-            res.render("register", payload);
+            return res.render("register", {
+                errors: "Something went wrong"
+            });
         });
 
         if(user === null) {
@@ -34,43 +28,36 @@ router.post('/register', async (req, res, next) => {
                 return res.redirect('/');
             })
         } else {
-            if(email === user.email) {
-                payload.errorMessage = "Email already in Use";
-            } else {
-                payload.errorMessage = "Username already in Use";
+            if(username === user.username) {
+                return res.render("register", {
+                    errors: "Username already in Use"
+                });
             }
-            res.render("register", payload);
         }
     } else {
-        payload.errorMessage = "Make sure each field has a valid value";
-        res.render("register", payload);
+        res.render("register",{
+            errors: "Make sure each field has a valid value"
+        });
     };
 });
 
 router.get('/login', (req, res, next) => {
-    res.render('login')
+    return res.render('login')
 });
 
 router.post('/login', async (req, res, next) => {
-
-    const { logUsername,logPassword } = req.body;
-    var payload = req.body;
-
-    if (logUsername && logPassword) {
-        var user = await User.findOne({
-            $or: [
-                { username: logUsername },
-                { email: logUsername  }
-            ]
-        })
+    const { username, password } = req.body;
+    if (username &&  password) {
+        var user = await User.findOne({ username: username })
         .catch((error) => {
             console.log(error);
-            payload.message = "Something went wrong";
-            res.render("login", payload);
+            return res.render("login", {
+                errors: 'Something went wrong'
+            });
         });
 
         if(user !== null) {
-            var result = await bcrypt.compare(logPassword, user.password);
+            var result = await bcrypt.compare(password, user.password);
 
             if (result === true) {
                 req.session.user = user;
@@ -79,12 +66,14 @@ router.post('/login', async (req, res, next) => {
     
         }
 
-        payload.message = "Login credentials incorrect";
-        return res.render("login", payload);
+        return res.render("login", {
+            errors: "Login credentials incorrect"
+        });
     } 
     
-    payload.message = "Make sure each field has a value";
-    res.render("login", payload);
+    res.render("login",{
+        errors: "Make sure each field has a valid value"
+    });
 });
 
 module.exports = router;
