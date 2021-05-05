@@ -108,7 +108,7 @@ app.use((error, req, res, next) => {
     if (res.headerSent) {
         return next(error);
     }
-    res.render('error')
+    res.render('error');
 });
 
 
