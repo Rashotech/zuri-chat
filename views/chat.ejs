@@ -82,6 +82,14 @@
       var user = JSON.parse('<%- JSON.stringify(userLoggedIn) %>');
       var room = JSON.parse('<%- JSON.stringify(currentRoom) %>');
       var roomName = JSON.parse('<%- JSON.stringify(roomName) %>');
+      function myFunction() {
+        var x = document.getElementById("myLinks");
+        if (x.style.display === "block") {
+          x.style.display = "none";
+        } else {
+          x.style.display = "block";
+        }
+      }
   </script>
   <script src="/js/chat.js"></script>
 </body>
