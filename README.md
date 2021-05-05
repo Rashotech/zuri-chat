@@ -5,4 +5,4 @@ The app has a general chat room and other chat room a user can join.
 
 The Chat app has registration and login(User Authentication). USers can also log out of the App.
 
-THe live link is at https://zurigist.herokuapp.com
+The live link is at https://zurigist.herokuapp.com
